@@ -1,5 +1,5 @@
 import { ListingCandidate } from "@/types/listing";
-import { ScoreBreakdown } from "./scoring";
+import { ScoreBreakdown } from "@/types/listing";
 
 export async function sendHighScoreNotification(listing: ListingCandidate, score: ScoreBreakdown) {
   const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;

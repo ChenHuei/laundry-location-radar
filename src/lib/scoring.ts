@@ -1,3 +1,4 @@
+import { businessConfig } from "./config";
 import { ScoreBreakdown, ScoreInput } from "@/types/listing";
 
 const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
@@ -22,12 +23,18 @@ export function scoreListing(x: ScoreInput): ScoreBreakdown {
   competition -= (x.strongCompetitors500m ?? 0) * 5;
   competition -= (x.normalCompetitors500m ?? 0) * 3;
   competition -= (x.weakCompetitors500m ?? 0) * 1;
+  competition -= (x.unknownCompetitors500m ?? 0) * businessConfig.competition.unknownDeduction;
+  if (x.unknownCompetitors500m) cons.push("附近洗衣業者強弱尚待人工確認（含可能的送洗店）");
+  if (x.competitionAnalysis?.status !== "available") {
+    competition = Math.min(competition, businessConfig.competition.unknownScoreCap);
+    cons.push(x.competitionAnalysis?.reason ?? "競爭資料尚未驗證");
+  }
   const oday = x.nearestOdayMeters;
   if (oday != null) {
-    if (oday < 500) { competition -= 15; cons.push(`Oday 約 ${oday}m，商圈高度重疊`); }
-    else if (oday < 800) { competition -= 9; cons.push(`Oday 約 ${oday}m，需確認加盟保護距離`); }
-    else if (oday < 1200) { competition -= 4; cons.push(`Oday 約 ${oday}m，仍需確認商圈切割`); }
-    else pros.push("附近 Oday 距離相對安全");
+    if (oday <= 500) { competition -= 15; cons.push(`Oday 約 ${Math.round(oday)}m，商圈高度重疊`); }
+    else if (oday <= 800) { competition -= 9; cons.push(`Oday 約 ${Math.round(oday)}m，需確認加盟保護距離`); }
+    else if (oday <= 1200) { competition -= 4; cons.push(`Oday 約 ${Math.round(oday)}m，仍需確認商圈切割`); }
+
   }
   competition = clamp(competition, 0, 25);
 
@@ -60,7 +67,7 @@ export function scoreListing(x: ScoreInput): ScoreBreakdown {
 
   let total = Math.round(housing + competition + storefront + rentValue + access);
   if (fatalFlags.length) total = Math.min(total, 59);
-  if (total >= 80) pros.unshift("達到高分通知門檻");
+  if (total >= businessConfig.notificationThreshold) pros.unshift("達到高分通知門檻");
 
   return { housing, competition, storefront, rentValue, access, total, pros, cons, fatalFlags };
 }

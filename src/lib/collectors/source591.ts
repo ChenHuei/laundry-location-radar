@@ -5,7 +5,7 @@ import { ListingCandidate } from "@/types/listing";
  * 591 adapter boundary.
  * Intentionally isolated because 591 does not expose a general public listing API.
  * Production implementation should only access pages/endpoints permitted by current terms/robots,
- * avoid bypassing anti-bot controls, and keep the hourly rate low.
+ * avoid bypassing anti-bot controls, and keep the request rate low.
  */
 export class Source591Collector implements ListingCollector {
   async collect(): Promise<ListingCandidate[]> {

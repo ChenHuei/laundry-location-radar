@@ -1,4 +1,4 @@
-export type CompetitorStrength = "strong" | "normal" | "weak" | "oday";
+export type CompetitorStrength = "strong" | "normal" | "weak" | "unknown";
 
 export interface ListingCandidate {
   sourceId: string;
@@ -15,7 +15,32 @@ export interface ListingCandidate {
   notes?: string | null;
 }
 
+export interface Competitor {
+  placeId: string;
+  name: string;
+  address: string | null;
+  lat: number;
+  lng: number;
+  distanceMeters: number;
+  rating: number | null;
+  reviewCount: number | null;
+  openingHours: string[] | null;
+  businessStatus: string | null;
+  isOday: boolean;
+  strength: CompetitorStrength;
+}
+
+export interface CompetitionAnalysis {
+  status: "available" | "partial" | "unavailable";
+  reason?: string;
+  searchRadiusMeters: number;
+  competitors: Competitor[];
+}
+
 export interface ScoreInput extends ListingCandidate {
+  competitionAnalysis?: CompetitionAnalysis;
+  unknownCompetitors500m?: number;
+  competitors800m?: number;
   households500m?: number | null;
   households800m?: number | null;
   rentalDemand?: "high" | "medium" | "low" | "unknown";

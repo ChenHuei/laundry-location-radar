@@ -1,22 +1,21 @@
-import { ListingCandidate, ScoreInput } from "@/types/listing";
+import type { ListingCandidate, ScoreInput } from "../types/listing";
+import { analyzeCompetition, type PlacesOptions } from "./places/google";
+import { businessConfig } from "./config";
 
-/** Placeholder enrichment layer. Replace with Google Places + population/GIS adapters.
- * Keeping this deterministic allows the MVP to run before API keys are connected.
- */
-export async function enrichListing(x: ListingCandidate): Promise<ScoreInput> {
+export async function enrichListing(x: ListingCandidate, options?: PlacesOptions): Promise<ScoreInput> {
+  const analysis = await analyzeCompetition(x, options);
+  const ordinary = analysis.competitors.filter(p => !p.isOday);
+  const primary = ordinary.filter(p => p.distanceMeters <= businessConfig.competition.primaryRadius);
+  const oday = analysis.competitors.filter(p => p.isOday);
+  const available = analysis.status !== "unavailable";
   return {
     ...x,
-    households500m: null,
-    households800m: null,
-    rentalDemand: "unknown",
-    oldApartmentDemand: "unknown",
-    strongCompetitors500m: 0,
-    normalCompetitors500m: 0,
-    weakCompetitors500m: 0,
-    nearestOdayMeters: null,
-    frontage: "unknown",
-    parking: "unknown",
-    utilitiesReady: null,
-    allow24h: null
+    competitionAnalysis: analysis,
+    strongCompetitors500m: available ? primary.filter(p => p.strength === "strong").length : undefined,
+    normalCompetitors500m: available ? primary.filter(p => p.strength === "normal").length : undefined,
+    weakCompetitors500m: available ? primary.filter(p => p.strength === "weak").length : undefined,
+    unknownCompetitors500m: available ? primary.filter(p => p.strength === "unknown").length : undefined,
+    competitors800m: available ? ordinary.filter(p => p.distanceMeters <= businessConfig.competition.secondaryRadius).length : undefined,
+    nearestOdayMeters: oday.length ? Math.min(...oday.map(p => p.distanceMeters)) : null,
   };
 }
