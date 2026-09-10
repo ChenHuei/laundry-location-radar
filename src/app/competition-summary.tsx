@@ -12,7 +12,7 @@ export function CompetitionSummary({ enrichment, score }: { enrichment?: ScoreIn
       <p>{enrichment?.nearestOdayMeters != null ? `已找到最近的 Oday：約 ${Math.round(enrichment.nearestOdayMeters)}m，加盟範圍需向品牌確認。` : `本次 ${analysis.searchRadiusMeters}m 搜尋未回傳 Oday，不代表不存在。`}</p>
       <ul>{analysis.competitors.map(p => <li key={p.placeId}>
         <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name)}&query_place_id=${encodeURIComponent(p.placeId)}`} target="_blank" rel="noreferrer">{p.name}</a>
-        {p.isOday ? " · 同品牌" : " · 強弱待確認"} · 約 {Math.round(p.distanceMeters)}m<br />
+        {p.excluded ? " · 已排除" : p.isOday ? " · 同品牌" : ` · ${{ strong: "強", normal: "中", weak: "弱", unknown: "未知" }[p.strength]}`} · 約 {Math.round(p.distanceMeters)}m<br />
         評分 {p.rating ?? "未知"} · 評論 {p.reviewCount ?? "未知"} 筆
         {p.businessStatus === "CLOSED_TEMPORARILY" && " · 暫停營業"}
         {p.openingHours && <div>{p.openingHours.join("；")}</div>}

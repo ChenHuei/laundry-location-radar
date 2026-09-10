@@ -154,3 +154,21 @@ This prioritizes data quality and decision usefulness before automation polish.
 **Decision:** The user accepts once-daily scanning instead of hourly scanning. This supersedes D011. Set Vercel Cron to `0 0 * * *` (UTC), targeting 08:00–08:59 Asia/Taipei; the morning window is the implementation default, not a guaranteed execution minute.
 
 **Reason:** Daily frequency fits the selected Vercel Hobby plan without an external scheduler. Keep the dashboard and business configuration consistent with the deployment schedule. Changing the cadence requires updating both `vercel.json` and `businessConfig.scanIntervalHours`.
+
+## D023 — Review data is separate from observations
+
+**Decision:** Store manual review in `manual_review` JSONB with an optimistic `review_version`. Automatic scans never write either field. Apply the review over fresh observations for displayed scores and scanning decisions, so notes, competitor classification and site checks survive refreshes. Missing Place IDs retain their saved overrides for possible future reappearance. The read layer computes effective scores before sorting; stored scores are scan snapshots.
+
+**Decision:** Real database-backed pages and APIs require Supabase Auth and the configured `ADMIN_EMAIL`; no public registration UI. Demo data remains public and read-only. Requests that mutate data require same-origin and owner authentication; server credentials never enter client bundles. Cron requires `CRON_SECRET` even in demo mode.
+
+## D024 — Usable area must be known, not inferred from total area
+
+**Decision:** Unknown first-floor area no longer falls back to total advertised area for layout points or rent-per-ping claims. This implements D007. Confirmed building-use prohibition and franchise conflict join utility and 24H fatal conditions. The current fatal-condition total cap of 59 remains, with explicit blockers in the detail page.
+
+## D025 — Manual ingestion and evidence-backed demand inputs
+
+**Decision:** Start real ingestion with a human-readable form and an advanced validated JSON batch path. Form entries are keyed by a hash of the supplied listing URL; batches use explicit source IDs. Manual imports do not send LINE messages. In manual source mode, daily scans refresh the 25 least-recently-seen active records per run; this is refresh, not automatic listing discovery.
+
+**Decision:** Catchment household overrides require provenance text and consistent 500m/800m counts. Never substitute village-wide totals for catchment counts. Official population ingestion and automatic address geocoding remain future integrations.
+
+**Decision:** Database triggers preserve observed price, size and active-state changes. Identical refreshes do not add history rows. RLS protects listings, history and scan logs; the server uses the privileged database client only after authorization for user requests.

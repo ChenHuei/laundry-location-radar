@@ -6,6 +6,7 @@ export const businessConfig = {
   rentCeiling: 40_000,
   notificationThreshold: 80,
   scanIntervalHours: 24,
+  scanBatchSize: 25,
   competition: {
     primaryRadius: 500,
     secondaryRadius: 800,

@@ -1,3 +1,4 @@
+import { importSchema } from "../validation";
 import { ListingCollector } from "./base";
 import { ListingCandidate } from "@/types/listing";
 
@@ -12,7 +13,7 @@ export class Source591Collector implements ListingCollector {
     const sourceUrl = process.env.LISTING_SOURCE_URL;
     if (!sourceUrl) throw new Error("LISTING_SOURCE_URL is required when LISTING_SOURCE=591");
 
-    const res = await fetch(sourceUrl, { headers: { "User-Agent": "LaundryLocationRadar/0.1 (+manual-owner-operated-monitor)" }, cache: "no-store" });
+    const res = await fetch(sourceUrl, { headers: { "User-Agent": "LaundryLocationRadar/0.1 (+manual-owner-operated-monitor)" }, cache: "no-store", signal: AbortSignal.timeout(15000) });
     if (!res.ok) throw new Error(`591 source returned ${res.status}`);
 
     // Keep parsing provider-specific markup out of core logic. Implement only after confirming
@@ -24,6 +25,6 @@ export class Source591Collector implements ListingCollector {
     }
     const data = await res.json();
     if (!Array.isArray(data)) throw new Error("Expected an array of listing records");
-    return data as ListingCandidate[];
+    return importSchema.parse(data);
   }
 }

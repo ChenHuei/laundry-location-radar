@@ -38,11 +38,12 @@ export function scoreListing(x: ScoreInput): ScoreBreakdown {
   }
   competition = clamp(competition, 0, 25);
 
-  const effectivePing = x.firstFloorPing ?? x.areaPing;
+  const effectivePing = x.firstFloorPing;
+  if (effectivePing == null) cons.push("一樓可用面積未確認，未以總坪數替代");
   let storefront = 8;
-  if (effectivePing >= 18 && effectivePing <= 26) { storefront += 7; pros.push("一樓有效坪數接近 Oday 理想店型"); }
-  else if (effectivePing >= 15 && effectivePing < 18) storefront += 4;
-  else if (effectivePing < 13) { storefront -= 3; cons.push("一樓有效坪數偏小"); }
+  if (effectivePing != null && effectivePing >= 18 && effectivePing <= 26) { storefront += 7; pros.push("一樓有效坪數接近 Oday 理想店型"); }
+  else if (effectivePing != null && effectivePing >= 15 && effectivePing < 18) storefront += 4;
+  else if (effectivePing != null && effectivePing < 13) { storefront -= 3; cons.push("一樓有效坪數偏小"); }
   if (x.utilitiesReady === true) storefront += 3;
   if (x.allow24h === true) storefront += 2;
   if (x.utilitiesReady === false) fatalFlags.push("三相電／排水／排風或瓦斯條件不符");
@@ -55,8 +56,8 @@ export function scoreListing(x: ScoreInput): ScoreBreakdown {
   else if (x.rent <= 35000) rentValue = 10;
   else if (x.rent <= 40000) rentValue = 7;
   else { rentValue = 3; cons.push("租金超過 4 萬目標"); }
-  const rentPerPing = x.rent / Math.max(effectivePing, 1);
-  if (rentPerPing < 1600) pros.push("有效坪租具競爭力");
+  const rentPerPing = effectivePing != null ? x.rent / effectivePing : null;
+  if (rentPerPing != null && rentPerPing < 1600) pros.push("有效坪租具競爭力");
 
   let access = 5;
   if (x.frontage === "good") access += 3;
@@ -65,6 +66,8 @@ export function scoreListing(x: ScoreInput): ScoreBreakdown {
   else if (x.parking === "poor") { access -= 2; cons.push("搬棉被/衣物臨停不便"); }
   access = clamp(access, 0, 10);
 
+  if (x.laundryAllowed === false) fatalFlags.push("建物或管理規約禁止洗衣店使用");
+  if (x.franchiseConflict === true) fatalFlags.push("已確認 Oday 加盟區域衝突");
   let total = Math.round(housing + competition + storefront + rentValue + access);
   if (fatalFlags.length) total = Math.min(total, 59);
   if (total >= businessConfig.notificationThreshold) pros.unshift("達到高分通知門檻");

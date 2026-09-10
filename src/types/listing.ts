@@ -16,6 +16,8 @@ export interface ListingCandidate {
 }
 
 export interface Competitor {
+  excluded?: boolean;
+  notes?: string;
   placeId: string;
   name: string;
   address: string | null;
@@ -38,6 +40,9 @@ export interface CompetitionAnalysis {
 }
 
 export interface ScoreInput extends ListingCandidate {
+  laundryAllowed?: boolean | null;
+  franchiseConflict?: boolean | null;
+  demandSource?: string;
   competitionAnalysis?: CompetitionAnalysis;
   unknownCompetitors500m?: number;
   competitors800m?: number;

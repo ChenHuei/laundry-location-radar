@@ -6,7 +6,7 @@ import { scoreListing } from "../src/lib/scoring";
 import { scanListings, type ScanStore } from "../src/lib/scan";
 import type { ListingCandidate, ScoreInput } from "../src/types/listing";
 
-const listing: ListingCandidate = { source: "manual", sourceId: "test", title: "測試", address: "測試地址", district: "三重區", rent: 26000, areaPing: 20, lat: 25.06, lng: 121.49, url: "https://example.com" };
+const listing: ListingCandidate = { source: "manual", sourceId: "test", title: "測試", address: "測試地址", district: "三重區", rent: 26000, areaPing: 20, firstFloorPing: 20, lat: 25.06, lng: 121.49, url: "https://example.com" };
 const place = (id: string, name = "測試洗衣店", latitude = 25.061) => ({ id, displayName: { text: name }, location: { latitude, longitude: 121.49 } });
 const reply = (body: unknown, status = 200): typeof fetch => async () => new Response(JSON.stringify(body), { status });
 
