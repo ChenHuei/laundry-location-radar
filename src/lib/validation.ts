@@ -4,7 +4,7 @@ export const safeUrl = z.string().url().max(2000).refine(value => ["https:", "ht
 export const listingSchema = z.object({
   source: z.enum(["manual", "591"]), sourceId: z.string().min(1).max(200).regex(/^[\w.-]+$/, "物件 ID 只能使用英數字、底線、點或連字號"),
   title: z.string().trim().min(1).max(300), address: z.string().trim().min(1).max(500),
-  district: z.literal("三重區"), url: safeUrl,
+  district: z.enum(businessConfig.districts), url: safeUrl,
   rent: z.number().int().positive().max(10000000), areaPing: z.number().positive().max(10000),
   firstFloorPing: z.number().positive().max(10000).nullable().optional(),
   lat: z.number().min(-90).max(90).nullable().optional(), lng: z.number().min(-180).max(180).nullable().optional(),

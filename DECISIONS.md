@@ -172,3 +172,7 @@ This prioritizes data quality and decision usefulness before automation polish.
 **Decision:** Catchment household overrides require provenance text and consistent 500m/800m counts. Never substitute village-wide totals for catchment counts. Official population ingestion and automatic address geocoding remain future integrations.
 
 **Decision:** Database triggers preserve observed price, size and active-state changes. Identical refreshes do not add history rows. RLS protects listings, history and scan logs; the server uses the privileged database client only after authorization for user requests.
+
+## D026 — Include Luzhou
+
+As requested on 2026-09-17, expand eligible geography to Sanchong and Luzhou. Centralize accepted districts in businessConfig.districts and expose a district selector in manual ingestion. Preserve existing Sanchong records and all scoring rules.

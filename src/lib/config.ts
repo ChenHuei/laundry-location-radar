@@ -1,5 +1,5 @@
 export const businessConfig = {
-  district: "三重區",
+  districts: ["三重區", "蘆洲區"],
   brand: "Oday",
   budget: 3_500_000,
   idealPing: 20,

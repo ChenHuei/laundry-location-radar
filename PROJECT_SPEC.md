@@ -14,7 +14,7 @@ These are the current default assumptions for Sanchong screening:
 - Total investment budget: approximately NTD 3.5M
 - Ideal ground-floor usable area: approximately 20 ping
 - Preferred monthly rent: NTD 40,000 or less
-- Geography: all of Sanchong District is eligible
+- Geography: all of Sanchong and Luzhou Districts are eligible
 - Monitoring freshness: daily scans; approximately one day of delay is acceptable
 - Alert threshold: score >= 80
 
@@ -54,7 +54,7 @@ Important implementation rule:
 
 Target filters for the first version:
 
-- Area: Sanchong District, New Taipei City
+- Area: Sanchong and Luzhou Districts, New Taipei City
 - Commercial/storefront rental listings
 - Preferred rent <= NTD 40,000
 - Broad candidate size range: approximately 12–40 ping
@@ -379,3 +379,7 @@ Build in this order unless a new requirement changes priorities:
 - SQL history triggers record changes without deleting delisted records; scan logs expose success/failure to the owner.
 - `/setup` describes required external services and provides full SQL. Until Supabase and credentials are configured, the deployment remains a demo.
 - Remaining integration work: actual service setup/end-to-end validation, official population/GIS ingestion, automatic geocoding, reliable notification retries and concurrent scan protection.
+
+## 18. Luzhou expansion (2026-09-17)
+
+User requested Luzhou listings alongside Sanchong. Both districts use the same rent, size and deterministic scoring rules. Manual ingestion accepts either district; missing addresses/coordinates remain unknown.

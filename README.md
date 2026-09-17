@@ -1,6 +1,6 @@
 # 洗衣店選址雷達
 
-針對新北市三重區 Oday 自助洗衣加盟的選址與審查工具。
+針對新北市三重區、蘆洲區 Oday 自助洗衣加盟的選址與審查工具。
 
 線上示範：https://laundry-location-radar.vercel.app
 
