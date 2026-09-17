@@ -33,3 +33,18 @@ export async function scanListings(listings: ListingCandidate[], store: ScanStor
   }
   return results;
 }
+
+// Isolate failures and bound API concurrency while visiting every active listing.
+export async function refreshAllListings(listings: ListingCandidate[], store: ScanStore, notify: Parameters<typeof scanListings>[2], enrich = enrichListing) {
+  const results: Awaited<ReturnType<typeof scanListings>> = [];
+  const failed: string[] = [];
+  for (let offset = 0; offset < listings.length; offset += businessConfig.refreshConcurrency) {
+    const batch = listings.slice(offset, offset + businessConfig.refreshConcurrency);
+    const settled = await Promise.allSettled(batch.map(listing => scanListings([listing], store, notify, enrich)));
+    settled.forEach((result, index) => {
+      if (result.status === "fulfilled") results.push(...result.value);
+      else failed.push(`${batch[index].source}:${batch[index].sourceId}`);
+    });
+  }
+  return { results, failed };
+}

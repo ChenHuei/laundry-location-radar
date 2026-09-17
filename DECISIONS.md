@@ -176,3 +176,7 @@ This prioritizes data quality and decision usefulness before automation polish.
 ## D026 — Include Luzhou
 
 As requested on 2026-09-17, expand eligible geography to Sanchong and Luzhou. Centralize accepted districts in businessConfig.districts and expose a district selector in manual ingestion. Preserve existing Sanchong records and all scoring rules.
+
+## D027 — Refresh all active listings daily
+
+Supersedes D025’s daily 25-record limit. Read all active records using stable ID pagination and update in groups of 5 concurrent records. Record partial failure rather than silently stopping after one failed item. Keep manual imports limited to 25 records per request. Browser discovery remains user-triggered. The current function retains a 300-second execution limit; no unlimited-volume guarantee is made.

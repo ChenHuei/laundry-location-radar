@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCollector } from "@/lib/collectors";
-import { scanListings } from "@/lib/scan";
+import { refreshAllListings } from "@/lib/scan";
 import { getScanStore } from "@/lib/scan-store";
 import { sendHighScoreNotification } from "@/lib/notify";
 import { getSupabaseAdmin } from "@/lib/supabase";
@@ -16,9 +16,9 @@ export async function GET(request: Request) {
   const started = new Date().toISOString();
   try {
     const listings = await getCollector().collect();
-    const results = await scanListings(listings, store, sendHighScoreNotification);
-    await db.from("scan_runs").insert({ started_at: started, finished_at: new Date().toISOString(), status: "success", scanned: listings.length });
-    return NextResponse.json({ scanned: listings.length, results });
+    const { results, failed } = await refreshAllListings(listings, store, sendHighScoreNotification);
+    await db.from("scan_runs").insert({ started_at: started, finished_at: new Date().toISOString(), status: failed.length ? "failed" : "success", scanned: results.length, error: failed.length ? `${failed.length} 筆更新失敗` : null });
+    return NextResponse.json({ attempted: listings.length, scanned: results.length, failed, results }, { status: failed.length ? 502 : 200 });
   } catch {
     await db.from("scan_runs").insert({ started_at: started, finished_at: new Date().toISOString(), status: "failed", error: "掃描失敗，請檢查來源與服務設定" });
     return NextResponse.json({ error: "掃描失敗，已保留既有資料" }, { status: 502 });

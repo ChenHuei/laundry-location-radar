@@ -23,7 +23,7 @@ export default async function Setup() {
       <li>在 Vercel 的 Project Settings → Environment Variables 填入以下值，然後重新部署。</li>
     </ol><dl><dt>SUPABASE_URL</dt><dd>Supabase 專案 URL</dd><dt>SUPABASE_SERVICE_ROLE_KEY</dt><dd>Supabase 伺服器端 service_role 金鑰，切勿使用 NEXT_PUBLIC_ 前綴</dd><dt>ADMIN_EMAIL</dt><dd>剛建立的管理者 email，必須完全對應</dd><dt>LISTING_SOURCE</dt><dd>填 manual，先從手動匯入的物件開始</dd></dl><p>完成後 <Link href="/login">登入管理者</Link>，再 <Link href="/import">匯入真實物件</Link>。登入過期時需重新登入。</p></section>
     <section className="panel"><h2>2. Google Places</h2><p>在 Google Cloud 啟用 Places API (New)，確認帳務可用；將伺服器 API key 填入 Vercel 的 <code>GOOGLE_PLACES_API_KEY</code>，限制僅可呼叫所需 API。每筆物件需提供 lat／lng 座標，未提供時保持待確認。</p><p>地圖連結可直接使用，不需瀏覽器金鑰。</p></section>
-    <section className="panel"><h2>3. 每日掃描</h2><p>在 Vercel 填入一組自行產生、至少 32 字元的隨機 <code>CRON_SECRET</code>。未設定時掃描端點會拒絕執行。正式部署後每天台灣時間 08:00～08:59 觸發；預覽部署不執行排程。</p><p>manual 模式每天重新分析最久未更新的 25 筆有效物件；超過 25 筆會分日輪替。不會自行從 591 抓取新刊登。</p></section>
+    <section className="panel"><h2>3. 每日分析更新</h2><p>在 Vercel 填入一組自行產生、至少 32 字元的隨機 <code>CRON_SECRET</code>。未設定時掃描端點會拒絕執行。正式部署後每天台灣時間 08:00～08:59 觸發；預覽部署不執行排程。</p><p>manual 模式每天更新全部有效物件的競爭分析與評分，分組執行以控制同時請求數。缺少座標仍標示未知。新刊登、租金與下架狀態需由瀏覽器檢視後匯入，不會自動從 591 更新。</p></section>
     <section className="panel"><h2>4. LINE 通知（可稍後設定）</h2><ol><li>建立 LINE Official Account，啟用 Messaging API。</li><li>在 LINE Developers 的 channel 取得長期 Channel access token 與 Your user ID，並將官方帳號加為好友。</li><li>填入 Vercel：<code>LINE_CHANNEL_ACCESS_TOKEN</code>、<code>LINE_USER_ID</code>。</li></ol><p>只有自動掃描首次發現的高分物件才發送通知；手動匯入與人工評分不會推播。尚未配置 LINE 不影響審查功能。</p></section>
   </main>;
 }

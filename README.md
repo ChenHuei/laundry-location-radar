@@ -53,7 +53,7 @@
 
 `vercel.json` 使用 `0 0 * * *`，正式環境每日台灣時間 08:00–08:59 執行。頻率與 `src/lib/config.ts` 的 `scanIntervalHours` 需同步調整。
 
-設定隨機 `CRON_SECRET`；未設定或未帶正確 Bearer token 時一律 401，不執行掃描。manual 模式依最久未更新排序，每次重查至多 25 筆有效物件，超過時分日輪替。它不會自動發現新的 591 刊登。
+設定隨機 `CRON_SECRET`；未設定或未帶正確 Bearer token 時一律 401，不執行掃描。manual 模式分頁讀取全部有效物件，每次最多 5 筆並行更新競爭分析與評分；單筆失敗不阻止其他物件，並記錄失敗。它不會自動發現新的 591 刊登。
 
 LINE 需要建立官方帳號／Messaging API，並設定：
 

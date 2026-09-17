@@ -375,7 +375,7 @@ Build in this order unless a new requirement changes priorities:
 - First-floor area must be explicitly provided; total listing area cannot substitute for it. Confirmed use prohibition and franchise conflicts are fatal checks.
 - Real pages/data APIs require the configured Supabase Auth owner; public demo is read-only. Cron fails closed without its secret.
 - New-property form and validated batches support manual ingestion. No LINE messages are sent by manual import or manual review.
-- Daily manual-source runs refresh up to 25 existing active records, oldest first; discovery requires an authorized source adapter.
+- Daily manual-source runs refresh all existing active records with bounded concurrency; discovery requires an authorized source adapter.
 - SQL history triggers record changes without deleting delisted records; scan logs expose success/failure to the owner.
 - `/setup` describes required external services and provides full SQL. Until Supabase and credentials are configured, the deployment remains a demo.
 - Remaining integration work: actual service setup/end-to-end validation, official population/GIS ingestion, automatic geocoding, reliable notification retries and concurrent scan protection.
@@ -383,3 +383,7 @@ Build in this order unless a new requirement changes priorities:
 ## 18. Luzhou expansion (2026-09-17)
 
 User requested Luzhou listings alongside Sanchong. Both districts use the same rent, size and deterministic scoring rules. Manual ingestion accepts either district; missing addresses/coordinates remain unknown.
+
+## 19. Full daily analysis refresh
+
+Refresh every active imported listing daily with concurrency 5. Paginate reads; isolate per-record failures. Missing coordinates remain unknown. Browser ingestion is user-triggered; cron does not refresh source prices or discover listings. The 25-record limit applies only to import payloads. Execution remains subject to the deployed function timeout; larger volumes may require durable job continuation.
